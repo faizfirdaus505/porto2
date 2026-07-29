@@ -74,7 +74,14 @@
       "id": "web",
       "title": "Front-End Development",
       "type": "image",
-      "projects": []
+      "projects": [
+        {
+          "src": "https://faiz-portofolio-v2.vercel.app/img/uploads/1785286737003_10.png",
+          "lbl": "10",
+          "type": "image",
+          "modelId": null
+        }
+      ]
     }
   ],
   "skills": [
