@@ -114,10 +114,10 @@ let cursors = [];
    harus baca data.json dari mana — tidak perlu isi GitHub Settings
    satu-satu di tiap perangkat hanya untuk MELIHAT update. */
 const GH_REPO_CONFIG = {
-  owner:    'faizfirdaus',                 // ganti dengan username GitHub kamu
-  repo:     'faiz-portfolio',              // ganti dengan nama repo kamu
+  owner:    'faizfirdaus505',                 // ganti dengan username GitHub kamu
+  repo:     'porto2',              // ganti dengan nama repo kamu
   branch:   'main',
-  pagesUrl: 'https://faizfirdaus.github.io/faiz-portfolio'
+  pagesUrl: 'https://faizfirdaus505.github.io/porto2/'
 };
 
 let GH = { ...GH_REPO_CONFIG };
