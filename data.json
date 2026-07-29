@@ -39,12 +39,6 @@
           "src": "img/5.png",
           "lbl": "Digital Art 02",
           "type": "image"
-        },
-        {
-          "src": "https://faiz-portofolio-v2.vercel.app/img/uploads/1785286588396_6.png",
-          "lbl": "6",
-          "type": "image",
-          "modelId": null
         }
       ]
     },
@@ -142,5 +136,55 @@
       "ico": "LI"
     }
   ],
-  "texts": {}
+  "texts": {
+    "ht1": "Within",
+    "ht2": "Without",
+    "hw1": "Design",
+    "hs1": "• Mechanical Design • Digital Artist",
+    "hs2": "&nbsp;• Graphic Design • Front-End Learner",
+    "al": "ABOUT",
+    "at": "\n        I am a Mechanical Design Engineering student driven by curiosity and creativity.\n        My passion lies in combining CAD design, digital art, and front-end development\n        to create innovative solutions that balance functionality with visual impact.\n      ",
+    "av": "\n        My vision is to continuously expand my expertise across multiple disciplines,\n        striving to become a true Jack of All Trades who can adapt, innovate,\n        and create meaningful solutions.\n      ",
+    "pjh": "Selected<br>Project",
+    "pjs": "\n        A selection of projects showcasing expertise in engineering,<br>\n        creativity, and digital craftsmanship.\n      ",
+    "ct-0": "CAD &amp; Mechanical Design",
+    "ct-1": "Digital Art",
+    "ct-2": "Graphic Design",
+    "ct-3": "Front-End Development",
+    "skh": "Core Competence<br>Skills",
+    "skp": "\n        A diverse set of technical and creative skills continuously developed<br>\n        to transform ideas into practical, functional, and visually engaging solutions.\n      ",
+    "sk-0-t": "Mechanical Design",
+    "sk-0-d": "Designing efficient mechanical systems through engineering principles.",
+    "sk-0-i-0": "Mechanical Design",
+    "sk-0-i-1": "Machine Design",
+    "sk-0-i-2": "Manufacturing Process",
+    "sk-0-i-3": "SolidWorks",
+    "sk-0-i-4": "AutoCAD 2D&amp;3D",
+    "sk-0-i-5": "Technical Drawing",
+    "sk-1-t": "Digital Artist",
+    "sk-1-d": "Transforming imagination into detailed illustrations with strong visual storytelling.",
+    "sk-1-i-0": "Concept Art",
+    "sk-1-i-1": "Character Design",
+    "sk-1-i-2": "Digital Painting",
+    "sk-1-i-3": "Paint Tool Sai2",
+    "sk-2-t": "Graphic Design",
+    "sk-2-d": "Crafting impactful visual communication through branding, layout, and digital media.",
+    "sk-2-i-0": "Branding",
+    "sk-2-i-1": "Poster Design",
+    "sk-2-i-2": "Social Media Design",
+    "sk-2-i-3": "Typography",
+    "sk-2-i-4": "Photo Manipulation",
+    "sk-2-i-5": "Photoshop",
+    "sk-3-t": "Front-End Learner",
+    "sk-3-d": "Building responsive web interfaces while expanding front-end development knowledge.",
+    "sk-3-i-0": "HTML",
+    "sk-3-i-1": "CSS",
+    "sk-3-i-2": "Responsive Design",
+    "sk-3-i-3": "UI Layout",
+    "skf": "More Skills<br>Are Being Forged.",
+    "cq": "\n          Every project you have seen here represents a step\n          in my journey of continuous learning and growth.\n        ",
+    "ce": "E. faizfirdaus505@gmail.com",
+    "sc-0": "Instagram",
+    "sc-1": "LinkedIn"
+  }
 }
