@@ -39,6 +39,12 @@
           "src": "img/5.png",
           "lbl": "Digital Art 02",
           "type": "image"
+        },
+        {
+          "src": "https://faiz-portofolio-v2.vercel.app/img/uploads/1785287602409_ini_121.png",
+          "lbl": "ini 121",
+          "type": "image",
+          "modelId": null
         }
       ]
     },
