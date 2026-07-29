@@ -39,12 +39,6 @@
           "src": "img/5.png",
           "lbl": "Digital Art 02",
           "type": "image"
-        },
-        {
-          "src": "https://faiz-portofolio-v2.vercel.app/img/uploads/1785287602409_ini_121.png",
-          "lbl": "ini 121",
-          "type": "image",
-          "modelId": null
         }
       ]
     },
@@ -76,10 +70,9 @@
       "type": "image",
       "projects": [
         {
-          "src": "https://faiz-portofolio-v2.vercel.app/img/uploads/1785287390609_10.png",
-          "lbl": "10",
-          "type": "image",
-          "modelId": null
+          "src": "img/6.png",
+          "lbl": "Web Project 01",
+          "type": "image"
         }
       ]
     }
@@ -93,7 +86,7 @@
         "Machine Design",
         "Manufacturing Process",
         "SolidWorks",
-        "AutoCAD 2D&amp;3D",
+        "AutoCAD 2D&3D",
         "Technical Drawing"
       ]
     },
@@ -165,7 +158,7 @@
     "sk-0-i-1": "Machine Design",
     "sk-0-i-2": "Manufacturing Process",
     "sk-0-i-3": "SolidWorks",
-    "sk-0-i-4": "AutoCAD 2D&amp;amp;3D",
+    "sk-0-i-4": "AutoCAD 2D&amp;3D",
     "sk-0-i-5": "Technical Drawing",
     "sk-1-t": "Digital Artist",
     "sk-1-d": "Transforming imagination into detailed illustrations with strong visual storytelling.",
