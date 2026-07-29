@@ -1,0 +1,1481 @@
+/* ================================================================
+   FAIZ PORTFOLIO — style.css
+   ================================================================
+   DAFTAR ISI:
+    1.  Font Custom
+    2.  CSS Variables & Reset
+    3.  Light Leak (video overlay background)
+    4.  Loading Screen
+    5.  Navigation Bar
+    6.  Animasi Scroll Reveal (dua arah: masuk & keluar)
+    7.  Elemen Dekorasi Industrial / Teknik
+    8.  Hero Section
+    9.  Animasi Kata Berputar (Word Cycle)
+   10.  Marquee / Ticker Teks
+   11.  About Section
+   12.  Projects Section (Multi-Category Slider)
+   13.  Skills Section
+   14.  Contact Section
+   15.  Lightbox (Popup gambar)
+   16.  3D Model Viewer
+   17.  Developer Mode (Modal login, Toolbar, Editable)
+   18.  Toast Notifikasi
+   19.  Kelas Utilitas
+   20.  Responsive — Tablet & Mobile
+   ================================================================ */
+
+
+/* ================================================================
+   1. FONT CUSTOM
+   Letakkan file .woff2 dan .woff di folder yang sama dengan index.html
+   ================================================================ */
+@font-face {
+  font-family: 'coolvetica';
+  src: url('coolvetica_rg-webfont.woff2') format('woff2'),
+       url('coolvetica_rg-webfont.woff') format('woff');
+}
+@font-face {
+  font-family: 'century';
+  src: url('schlbkb-webfont.woff2') format('woff2'),
+       url('schlbkb-webfont.woff') format('woff');
+}
+@font-face {
+  font-family: 'gothic';
+  src: url('bank_gothic_medium_bt-webfont.woff2') format('woff2'),
+       url('bank_gothic_medium_bt-webfont.woff') format('woff');
+}
+@font-face {
+  font-family: 'isocpeur';
+  src: url('isocpeur-webfont.woff2') format('woff2'),
+       url('isocpeur-webfont.woff') format('woff');
+}
+
+
+/* ================================================================
+   2. CSS VARIABLES & RESET
+   ================================================================ */
+:root {
+  --gold:    #ffbb00;          /* Warna emas utama */
+  --gold2:   #ff9900;          /* Emas lebih gelap untuk aksen */
+  --dark:    #000000;
+  --nav-h:   76px;             /* Tinggi navigation bar */
+  --ease:    cubic-bezier(0.16, 1, 0.3, 1); /* Kurva easing default */
+}
+
+/* Reset total — mencegah spacing default browser */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Cegah scroll horizontal di semua perangkat */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'coolvetica', Arial, sans-serif;
+  color: #fff;
+  background: #000;
+  letter-spacing: 2px;
+}
+
+
+/* ================================================================
+   3. LIGHT LEAK — Video overlay cahaya (img/leak2.mp4)
+   ================================================================ */
+.light-leak {
+  position: fixed;
+  inset: 0;             /* shorthand untuk top/right/bottom/left: 0 */
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.light-leak video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.12;
+  mix-blend-mode: soft-light; /* Menyatu dengan background hitam */
+}
+
+
+/* ================================================================
+   4. LOADING SCREEN
+   ================================================================ */
+
+.n1{
+    font-style: italic;
+    letter-spacing: 5px;
+}
+
+.n2{
+    color: var(--gold);
+    font-style: italic;
+    font-family: "century";
+    font-size: 12px;
+    letter-spacing: 3px;
+}
+
+#loader {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.9s ease;
+}
+
+/* Saat kelas .out ditambahkan via JS, loading screen memudar */
+#loader.out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Efek scan line di atas loading screen */
+#loader::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.05) 0px, rgba(0, 0, 0, 0.05) 1px,
+    transparent 1px, transparent 2px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Ambient glow di sudut loading screen */
+#loader::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 0% 100%, rgba(255,187,0,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse at 100% 0%, rgba(255,100,0,0.05) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+/* ── LOGO DI LOADING SCREEN ──
+   PENTING: text-align:left dan align-items:flex-start agar
+   teks rata kiri (sama seperti nav logo), BUKAN center.
+   Ini yang membuatnya matching saat terbang ke nav logo. */
+#ld-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Rata kiri, bukan tengah */
+  text-align: left;
+  opacity: 0;
+  font-style: italic;
+  position: relative;
+  z-index: 2;
+  transform-origin: top left; /* Titik acuan transformasi */
+}
+
+/* Baris 1: "FAIZ" — ukuran besar */
+#ld-l1 {
+  font-family: 'coolvetica', Arial;
+  font-size: clamp(3rem, 9vw, 6.5rem);
+  letter-spacing: 14px;
+  color: #fff;
+  display: block;
+}
+
+/* Baris 2: "Portofolio" — lebih kecil, warna emas */
+#ld-l2 {
+  font-family: 'century', Arial;
+  font-size: clamp(1.2rem, 3.2vw, 2.6rem);
+  color: var(--gold);
+  display: block;
+  letter-spacing: 4px;
+  opacity: 0; /* Muncul setelah baris 1 selesai diketik */
+}
+
+/* Efek kursor berkedip saat mengetik */
+#ld-l1.cur, #ld-l2.cur {
+  border-right: 3px solid var(--gold);
+  animation: cursorBlink 0.6s step-end infinite;
+}
+@keyframes cursorBlink {
+  50% { border-color: transparent; }
+}
+
+/* Progress bar di bagian bawah loading */
+.ld-bar-wrap {
+  position: absolute;
+  bottom: 55px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(340px, 82vw);
+  text-align: center;
+  z-index: -2;
+}
+#ld-pct {
+  font-family: 'gothic', Arial;
+  font-size: 0.68rem;
+  letter-spacing: 6px;
+  color: rgba(255, 187, 0, 0.65);
+  margin-bottom: 12px;
+}
+.ld-track {
+  height: 1px;
+  background: rgba(255, 187, 0, 0.18);
+  border-radius: 1px;
+  overflow: hidden;
+}
+#ld-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #ff6600, var(--gold), #ffdd00);
+  box-shadow: 0 0 14px rgba(255, 187, 0, 0.7);
+  transition: width 0.1s ease;
+}
+
+
+/* ================================================================
+   5. NAVIGATION BAR
+   ================================================================ */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 60px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  z-index: 1000;
+}
+
+/* Garis gradasi emas di bawah nav */
+nav::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 187, 0, 0.25) 15%,
+    rgba(255, 187, 0, 0.9) 50%,
+    rgba(255, 187, 0, 0.25) 85%,
+    transparent
+  );
+}
+
+/* Logo nav — disembunyikan sampai loading selesai */
+#nav-logo {
+  font-style: italic;
+  line-height: 1.15;
+  opacity: 0; /* JS akan menampilkannya setelah animasi loading */
+  transition: opacity 0.4s ease;
+  user-select: none;
+}
+#nav-logo .n1 {
+  font-size: 1.05rem;
+  letter-spacing: 5px;
+}
+#nav-logo .n2 {
+  font-family: 'century', Arial;
+  color: var(--gold);
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+}
+
+/* Jam digital di nav */
+#nav-clock {
+  font-family: 'gothic', Arial;
+  font-size: 1.2rem;
+  letter-spacing: 6px;
+  color: rgba(255, 187, 0, 0.7);
+  flex-shrink: 0;
+}
+#nc-sep {
+  animation: clockBlink 1s step-end infinite;
+}
+@keyframes clockBlink {
+  50% { opacity: 0; }
+}
+
+/* Daftar link navigasi */
+nav ul {
+  display: flex;
+  list-style: none;
+  width: 40%;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0;
+}
+nav ul li a {
+  display: block;
+  position: relative;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.8rem;
+  letter-spacing: 3px;
+  padding: 6px 3px;
+  transition: color 0.3s;
+}
+/* Garis bercahaya di bawah link saat aktif / hover */
+nav ul li a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  box-shadow: 0 0 10px var(--gold), 0 0 22px rgba(255, 187, 0, 0.5);
+  transition: width 0.38s ease;
+  border-radius: 2px;
+}
+nav ul li a:hover { color: #fff; }
+nav ul li a:hover::after,
+nav ul li a.act::after { width: 100%; }
+nav ul li a.act { color: #fff; }
+
+/* Hamburger menu untuk mobile */
+.hbg {
+  display: none; /* Tersembunyi di desktop */
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  z-index: 10;
+  padding: 4px;
+}
+.hbg span {
+  display: block;
+  width: 26px;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: transform 0.45s ease, opacity 0.3s ease;
+  transform-origin: center;
+}
+/* Animasi hamburger → X saat terbuka */
+.hbg.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.hbg.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hbg.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+
+/* ================================================================
+   6. SCROLL REVEAL — ANIMASI DUA ARAH (Masuk & Keluar Segmen)
+   ================================================================
+   .rev          = state awal (tersembunyi)
+   .rev.shown    = state terlihat (animasi masuk)
+   .rev.exit-up  = elemen keluar ke atas (scroll ke bawah melewatinya)
+   .rev.exit-down= elemen keluar ke bawah (jarang, sebagai backup)
+   ================================================================ */
+.rev {
+  opacity: 0;
+  transform: translateY(48px);
+  filter: blur(4px);
+  transition:
+    opacity  0.85s var(--ease),
+    transform 0.85s var(--ease),
+    filter   0.85s var(--ease);
+}
+
+/* Varian arah asal animasi */
+.rev.fl { transform: translateX(-55px); }  /* dari kiri */
+.rev.fr { transform: translateX(55px); }   /* dari kanan */
+.rev.sc { transform: scale(0.87); }        /* dari skala kecil */
+
+/* State terlihat — semua properti kembali normal */
+.rev.shown {
+  opacity: 1 !important;
+  transform: none !important;
+  filter: blur(0) !important;
+}
+
+/* Animasi keluar ke atas (scroll ke bawah, segmen ditinggalkan) */
+.rev.exit-up {
+  opacity: 0 !important;
+  transform: translateY(-48px) !important;
+  filter: blur(4px) !important;
+  transition:
+    opacity  0.55s ease,
+    transform 0.55s ease,
+    filter   0.55s ease;
+}
+
+/* Animasi keluar ke bawah (scroll balik ke atas) */
+.rev.exit-down {
+  opacity: 0 !important;
+  transform: translateY(30px) !important;
+  filter: blur(4px) !important;
+  transition:
+    opacity  0.55s ease,
+    transform 0.55s ease,
+    filter   0.55s ease;
+}
+
+/* Delay transisi untuk efek stagger (muncul bergantian) */
+.d1 { transition-delay: 0.13s; }
+.d2 { transition-delay: 0.26s; }
+.d3 { transition-delay: 0.42s; }
+.d4 { transition-delay: 0.58s; }
+
+
+/* ================================================================
+   7. ELEMEN DEKORASI INDUSTRIAL / GAMBAR TEKNIK
+   ================================================================ */
+
+/* Sinar scan yang bergerak vertikal di hero */
+.scan-beam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 187, 0, 0.32) 40%,
+    rgba(255, 187, 0, 0.32) 60%,
+    transparent
+  );
+  animation: scanAnim 5s ease-in-out infinite;
+  z-index: 3;
+  pointer-events: none;
+}
+@keyframes scanAnim {
+  0%   { top: 0;    opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 0.4; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* Blueprint grid — latar belakang berbintik teknik */
+.bp-grid {
+  background-image:
+    linear-gradient(rgba(255, 187, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 187, 0, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* Crosshair di atas foto profil */
+.ch-wrap { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.ch-h { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(255, 187, 0, 0.12); }
+.ch-v { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: rgba(255, 187, 0, 0.12); }
+.ch-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 35px; height: 35px;
+  border: 1px solid rgba(255, 187, 0, 0.18);
+  border-radius: 50%;
+}
+
+/* Label teknis bergaya anotasi gambar teknik */
+.tech-label {
+  font-family: 'gothic', Arial;
+  font-size: 0.58rem;
+  letter-spacing: 4px;
+  color: rgba(255, 187, 0, 0.38);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tech-label::before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 1px;
+  background: rgba(255, 187, 0, 0.28);
+}
+
+/* Bracket sudut (pojok elemen) — gaya gambar teknik */
+.bkt { position: relative; }
+.bkt::before {
+  content: '';
+  position: absolute;
+  top: -8px; left: -8px;
+  width: 22px; height: 22px;
+  border-top: 1.5px solid rgba(255, 187, 0, 0.45);
+  border-left: 1.5px solid rgba(255, 187, 0, 0.45);
+}
+.bkt::after {
+  content: '';
+  position: absolute;
+  bottom: -8px; right: -8px;
+  width: 22px; height: 22px;
+  border-bottom: 1.5px solid rgba(255, 187, 0, 0.45);
+  border-right: 1.5px solid rgba(255, 187, 0, 0.45);
+}
+
+/* Gear / roda gigi berputar (dekorasi di contact) */
+.ct-gear {
+  position: absolute;
+  bottom: -60px; left: -60px;
+  width: 320px; height: 320px;
+  opacity: 0.04;
+  animation: rotateSlow 30s linear infinite;
+  pointer-events: none;
+}
+@keyframes rotateSlow {
+  to { transform: rotate(360deg); }
+}
+
+
+/* ================================================================
+   8. HERO SECTION
+   ================================================================ */
+
+/* Spacer untuk mendorong konten di bawah nav yang fixed */
+#home { height: var(--nav-h); }
+
+/* Hero section tepat setinggi viewport, overflow hidden
+   agar hero image tidak keluar dari batas section */
+.hero-sec {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Teks hero di atas hero image */
+.hero-text {
+  padding: calc(var(--nav-h) + 40px) 0 0 4%;
+  position: relative;
+  z-index: 2;
+}
+
+/* Tagline kecil di atas judul */
+.hero-tagline {
+  font-family: 'gothic', Arial;
+  font-style: italic;
+  font-size: 0.82rem;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Judul utama — DIKECILKAN dari versi sebelumnya */
+.hero-h1 {
+  font-style: italic;
+  font-size: clamp(1.7rem, 3.8vw, 3.5rem); /* Max 3.5rem, lebih kecil dari sebelumnya */
+  letter-spacing: 4px;
+  font-weight: 90;
+  line-height: 1.05;
+  margin-bottom: 12px;
+}
+
+/* Sub-judul (list keahlian) */
+.hero-subs { display: flex; flex-wrap: wrap; }
+.hero-subs h4 {
+  font-family: Arial;
+  font-weight: 600;
+  font-style: italic;
+  text-decoration: underline;
+  font-size: 0.87rem;
+  letter-spacing: 1px;
+  margin-right: 3px;
+}
+
+/* Hero image — mengisi penuh section sebagai background */
+.hero-img-wrap {
+  position: absolute;
+  top: -150px ; left: 0; right: 0;
+  height: 100%; /* Hanya mengisi hero section */
+  z-index: -6;
+  overflow: hidden;
+}
+.hero-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+/* Hazard stripe — di bagian BAWAH hero section
+   FIX: sebelumnya top:640px, sekarang bottom:0 agar selalu terlihat */
+/* .hazard {
+  display: flex;
+  bottom: 0;
+  left: 0; right: 0;
+  height: 260px;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 35%, #000 55%),
+    linear-gradient(to top, transparent 0%, rgba(0,0,0,0.4) 25%, transparent 48%),
+    repeating-linear-gradient(-45deg, #0c0c0c 0px, #0c0c0c 28px, #ffbb00 28px, #ffbb00 56px);
+} */
+.hazard{
+    z-index: -3;
+    width:100%;
+    height:300px;
+    position: absolute;
+    top: 670px;
+    background:
+    /* Gradasi hitam dari atas */
+    linear-gradient(
+        to bottom,
+        #000 0%,
+        rgba(0,0,0,.75) 18%,
+        rgba(0,0,0,.25) 35%,
+        rgba(0,0,0,0) 50%
+    ),
+
+    /* Gradasi hitam dari bawah */
+    linear-gradient(
+        to top,
+        #000 0%,
+        rgba(0,0,0,.75) 18%,
+        rgba(0,0,0,.25) 35%,
+        rgba(0,0,0,0) 50%
+    ),
+
+    /* Hazard Stripe */
+    repeating-linear-gradient(
+        -45deg,
+        #0b0b0b 0px,
+        #0b0b0b 28px,
+        #ffbb00 28px,
+        #ffbb00 56px
+    );
+}
+
+
+/* ================================================================
+   9. WORD CYCLE — Kata "Inovation" berganti dengan blur
+   ================================================================
+   Kata-kata: Inovation → Precision → Evolution → Ambition → Creation
+   ================================================================ */
+.cycle-word {
+  display: inline-block;
+  transition: opacity 0.5s ease, filter 0.5s ease;
+}
+/* State blur keluar */
+.cycle-word.blur-out {
+  opacity: 0;
+  filter: blur(14px);
+}
+/* Animasi blur masuk */
+@keyframes blurFadeIn {
+  from { opacity: 0; filter: blur(14px); }
+  to   { opacity: 1; filter: blur(0); }
+}
+.cycle-word.blur-in {
+  animation: blurFadeIn 0.55s ease forwards;
+}
+
+
+/* ================================================================
+   10. MARQUEE / TICKER TEKS
+   ================================================================ */
+.mq-wrap {
+  overflow: hidden;
+  width: 100%;
+  max-width: 100vw;
+  padding: 14px 0;
+  border-top: 1px solid rgba(255, 187, 0, 0.12);
+  border-bottom: 1px solid rgba(255, 187, 0, 0.12);
+  background: rgba(255, 187, 0, 0.025);
+  position: absolute;
+  z-index: 5;
+  top: 0px;
+}
+.mq-inner {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: mqRun 36s linear infinite;
+}
+.mq-inner span {
+  font-family: 'gothic', Arial;
+  font-size: 1rem;
+  letter-spacing: 7px;
+  color: rgba(255, 187, 0, 0.55);
+  padding: 0 55px;
+  font-weight: 500;
+}
+.mq-inner span em {
+  font-style: normal;
+  color: rgba(255, 255, 255, 0.18);
+}
+/* Animasi bergerak dari kanan ke kiri — -50% karena konten digandakan */
+@keyframes mqRun {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+
+/* ================================================================
+   11. ABOUT SECTION
+   ================================================================ */
+#about {
+  scroll-margin-top: var(--nav-h); /* Offset agar tidak tertutup nav */
+}
+
+/* Grid layout about section */
+.about-grid {
+  display: grid;
+  grid-template-areas:
+    "lbl lbl"
+    "txt photo"
+    "line line"
+    "emp vis";
+  grid-template-columns: 2fr 1fr;
+  /* FIX: Dikurangi drastis dari 740px → 80px
+     Hero section sekarang self-contained (height:100vh overflow:hidden)
+     sehingga tidak perlu mendorong about section sejauh itu */
+  padding-top: 80px;
+}
+
+/* Label "ABOUT" */
+.a-lbl {
+  grid-area: lbl;
+  font-family: Arial;
+  font-size: 0.78rem;
+  letter-spacing: 6px;
+  color: var(--gold);
+  margin-left: 5%;
+  padding: 30px 0;
+}
+
+/* Paragraf teks about */
+.a-txt {
+  grid-area: txt;
+  margin-left: 10%;
+  width: 72%;
+  font-size: clamp(1rem, 2.1vw, 1.62rem);
+  font-weight: 50;
+  line-height: 1.42;
+}
+
+/* Kolom foto profil */
+.a-photo-col { grid-area: photo; }
+.a-frame {
+  width: 220px;
+  height: 320px;
+  position: relative;
+  margin-left: 25%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  isolation: isolate;
+  background: #161616;
+}
+.a-frame img {
+  width: calc(100% - 10px);
+  height: calc(100% - 10px);
+  object-fit: cover;
+  position: relative;
+  z-index: 2;
+}
+
+/* Animasi border berputar di foto profil */
+@property --deg {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+.a-frame::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  background: conic-gradient(
+    from var(--deg),
+    #570000 0deg, #570000 250deg,
+    #fff000 290deg, #ffe600 310deg,
+    #fff000 340deg, #ffe600 360deg
+  );
+  animation: spin 3s linear infinite;
+  z-index: 0;
+  padding: 3px;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  box-sizing: border-box;
+}
+.a-frame::after {
+  content: '';
+  position: absolute;
+  inset: -900px;
+  background: conic-gradient(
+    from var(--deg),
+    #570000 0deg, #570000 250deg,
+    #fff000 290deg, #ffe600 310deg,
+    #fff000 340deg, #ffe600 360deg
+  );
+  animation: spin 3s linear infinite;
+  filter: blur(85px);
+  opacity: 0.45;
+  z-index: -1;
+}
+@keyframes spin {
+  from { --deg: 0deg; }
+  to   { --deg: 360deg; }
+}
+
+/* Garis pemisah emas */
+.a-line {
+  grid-area: line;
+  width: 93%;
+  height: 1px;
+  margin: 52px auto;
+  background: linear-gradient(90deg, transparent, var(--gold) 35%, var(--gold) 65%, transparent);
+  box-shadow: 0 0 18px rgba(255, 187, 0, 0.25);
+}
+
+/* Teks visi di kanan bawah about */
+.a-vis {
+  grid-area: vis;
+  font-family: 'isocpeur', Arial;
+  font-size: clamp(0.84rem, 1.4vw, 1.05rem);
+  font-weight: 20;
+  line-height: 1.65;
+  text-align: right;
+  margin-right: 10%;
+  padding-bottom: 120px;
+}
+
+#about {
+    scroll-margin-top: -0px;
+}
+
+
+/* ================================================================
+   12. PROJECTS SECTION — Multi-Category Slider
+   ================================================================ */
+#project {
+  scroll-margin-top: var(--nav-h);
+  margin-top: 80px;
+}
+
+/* Header intro projects */
+.proj-intro { text-align: center; padding: 0 20px; }
+.proj-intro h2 {
+  color: var(--gold);
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  line-height: 1;
+}
+.proj-intro p {
+  font-size: 0.78rem;
+  line-height: 2;
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 2px;
+  margin-top: 18px;
+}
+
+/* Setiap blok kategori */
+.proj-cat {
+  margin-top: 90px;
+  padding: 0 30px;
+}
+
+/* Header kategori dengan nomor, judul, dan garis */
+.cat-head {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 40px;
+  padding-left: 10px;
+}
+.cat-num {
+  font-family: 'gothic', Arial;
+  font-size: 2rem;
+  color: rgba(255, 187, 0, 0.2);
+  letter-spacing: 3px;
+  min-width: 42px;
+  line-height: 1;
+}
+.cat-title {
+  font-family: 'gothic', Arial;
+  font-size: clamp(0.95rem, 2vw, 1.3rem);
+  letter-spacing: 5px;
+  color: rgba(255, 255, 255, 0.9);
+}
+.cat-rule { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(255,187,0,0.5), transparent); }
+.cat-badge {
+  font-family: 'gothic', Arial;
+  font-size: 0.55rem;
+  letter-spacing: 4px;
+  color: rgba(255, 187, 0, 0.5);
+  border: 1px solid rgba(255, 187, 0, 0.25);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+/* Dev mode: kontrol per-kategori */
+.cat-dev-bar { display: none; gap: 8px; margin-top: -28px; margin-bottom: 28px; padding-left: 60px; flex-wrap: wrap; }
+body.dev-on .cat-dev-bar { display: flex; }
+
+/* ── SLIDER KAROUSEL 3D ── */
+/* Wadah slider — posisi relatif untuk absolute children */
+.slider-outer {
+  position: relative;
+  height: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+  overflow: visible; /* Dibiarkan visible agar efek 3D terlihat di desktop */
+}
+
+/* Setiap slide item */
+.sld {
+  position: absolute;
+  width: 600px;
+  height: 300px;
+  left: 50%;
+  top: 50%;
+  transition: transform 0.52s cubic-bezier(0.34, 1.15, 0.64, 1), opacity 0.52s ease;
+  cursor: pointer;
+  border-radius: 15px;
+  overflow: hidden;
+}
+.sld img, .m3d-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 15px;
+}
+
+/* Tampilan untuk slide 3D model */
+.m3d-thumb {
+  background: linear-gradient(135deg, #0d0d00, #1a1a05);
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  pointer-events: none;
+}
+.m3d-icon { font-size: 3rem; color: rgba(255, 187, 0, 0.5); }
+.m3d-name { font-family: 'gothic', Arial; font-size: 0.7rem; letter-spacing: 4px; color: rgba(255,255,255,0.6); }
+.m3d-badge { font-family: 'gothic', Arial; font-size: 0.55rem; letter-spacing: 5px; color: var(--gold); border: 1px solid rgba(255,187,0,0.3); padding: 4px 10px; border-radius: 3px; }
+
+/* Overlay "VIEW FULL" di slide aktif */
+.sld-ov {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.72), transparent 55%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 20px;
+  opacity: 0;
+  transition: opacity 0.38s;
+  border-radius: 15px;
+}
+.sld-ov span { font-size: 0.68rem; letter-spacing: 5px; color: rgba(255,255,255,0.88); }
+
+/* ── POSISI SETIAP SLIDE (3D Carousel) ──
+   Slide aktif di tengah, yang lain menjauh ke samping dan mengecil */
+.sld.sa  { z-index:50; transform:translate(-50%,-50%) scale(1); box-shadow:0 28px 65px rgba(0,0,0,0.75); }
+.sld.sa  .sld-ov { opacity: 1; }
+.sld.sa::after { content:''; position:absolute; inset:-1px; border-radius:16px; background:linear-gradient(135deg,rgba(255,187,0,0.5),transparent 50%,rgba(255,187,0,0.2)); pointer-events:none; }
+.sld.sp1 { transform:translate(calc(-50% - 280px),calc(-50% - 50px))  scale(0.80); z-index:40; }
+.sld.sp2 { transform:translate(calc(-50% - 500px),calc(-50% - 100px)) scale(0.65); z-index:30; opacity:0.72; }
+.sld.sp3 { transform:translate(calc(-50% - 680px),calc(-50% - 200px)) scale(0.50); z-index:20; opacity:0.50; }
+.sld.sp4 { transform:translate(calc(-50% - 830px),calc(-50% - 300px)) scale(0.35); z-index:10; opacity:0.30; }
+.sld.sn1 { transform:translate(calc(-50% + 280px),calc(-50% - 50px))  scale(0.80); z-index:40; }
+.sld.sn2 { transform:translate(calc(-50% + 500px),calc(-50% - 100px)) scale(0.65); z-index:30; opacity:0.72; }
+.sld.sn3 { transform:translate(calc(-50% + 680px),calc(-50% - 200px)) scale(0.50); z-index:20; opacity:0.50; }
+.sld.sn4 { transform:translate(calc(-50% + 830px),calc(-50% - 300px)) scale(0.35); z-index:10; opacity:0.30; }
+.sld.sh  { transform:translate(-50%,-50%) scale(0.2); opacity:0; z-index:0; pointer-events:none; }
+
+/* Tombol hapus gambar (dev mode) */
+.sld-del {
+  position: absolute; top:10px; right:10px;
+  display: none;
+  width:28px; height:28px; border-radius:50%;
+  background:rgba(0,0,0,0.72); border:1px solid rgba(255,70,70,0.45);
+  color:rgba(255,100,100,0.85); cursor:pointer;
+  align-items:center; justify-content:center; font-size:0.82rem;
+  z-index:10; transition:all 0.22s;
+}
+.sld-del:hover { background: rgba(255,60,60,0.32); }
+body.dev-on .sld .sld-del { display: flex; }
+
+/* Tombol set 3D model (dev mode, khusus slide aktif) */
+.add-model-btn {
+  position:absolute; bottom:10px; left:10px;
+  display:none;
+  background:rgba(0,0,0,0.8); border:1px solid rgba(255,187,0,0.3);
+  color:rgba(255,187,0,0.7); padding:4px 10px; border-radius:4px;
+  cursor:pointer; font-size:0.6rem; letter-spacing:3px; z-index:10; transition:all 0.2s;
+}
+.add-model-btn:hover { border-color: var(--gold); color: var(--gold); }
+body.dev-on .sld.sa .add-model-btn { display: block; }
+
+/* Dots navigasi slider */
+.dots-row { display:flex; justify-content:center; gap:9px; position:relative; z-index:60; margin-top:10px; margin-bottom:20px; }
+.dot { width:6px; height:6px; border-radius:50%; background:rgba(255,187,0,0.28); cursor:pointer; transition:all 0.35s; }
+.dot.on { width:22px; border-radius:3px; background:var(--gold); box-shadow:0 0 10px var(--gold); }
+
+/* Pesan kosong saat kategori belum punya proyek */
+.cat-empty { text-align:center; padding:80px; color:rgba(255,255,255,0.2); font-size:0.8rem; letter-spacing:3px; border:1px dashed rgba(255,255,255,0.08); border-radius:14px; margin:20px 0; }
+
+/* Tombol tambah kategori (dev mode) */
+.add-cat-wrap { display:none; justify-content:center; margin-top:60px; margin-bottom:40px; }
+body.dev-on .add-cat-wrap { display: flex; }
+.add-cat-btn {
+  background:none; border:1px dashed rgba(255,187,0,0.25); color:rgba(255,187,0,0.45);
+  padding:14px 40px; border-radius:10px; cursor:pointer; font-family:'gothic',Arial;
+  font-size:0.72rem; letter-spacing:5px; transition:all 0.3s;
+}
+.add-cat-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+
+/* ================================================================
+   13. SKILLS SECTION
+   ================================================================ */
+#skills { scroll-margin-top: var(--nav-h); padding: 80px 0 130px; }
+
+.sk-hd { text-align: center; }
+.sk-hd h2 { padding-top: 80px; color: var(--gold); font-size: clamp(1.8rem, 4.5vw, 3.2rem); }
+.sk-hd p { padding-top: 40px; font-size: 0.78rem; line-height: 2; color: rgba(255,255,255,0.65); letter-spacing: 2px; }
+
+.sk-grid { display:flex; flex-wrap:wrap; justify-content:center; gap:32px; margin-top:80px; padding:0 30px; }
+
+/* Card skill */
+.sk-card {
+  width: 290px;
+  min-height: 520px;
+  background: rgba(255,255,255,0.038);
+  border: 1px solid rgba(255,187,0,0.32);
+  border-radius: 20px;
+  padding: 25px 20px 30px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.42s, box-shadow 0.42s, border-color 0.42s;
+}
+/* Garis tipis di atas card */
+.sk-card::before {
+  content: '';
+  position: absolute; top:-1px; left:20%; right:20%; height:1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+}
+.sk-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 28px 55px rgba(255,187,0,0.1);
+  border-color: rgba(255,187,0,0.7);
+}
+.sk-card h3 { text-align:center; font-size:1.45rem; font-weight:40; margin:38px 0 16px; }
+.sk-card > p { font-family:Arial; font-size:0.78rem; line-height:1.65; text-align:center; color:rgba(255,255,255,0.62); letter-spacing:0.5px; margin:0 auto 20px; width:88%; }
+.sk-card ul { list-style:none; }
+.sk-card ul li { font-family:'isocpeur',Arial; text-align:center; font-size:0.95rem; letter-spacing:2px; margin-top:13px; }
+.sk-card ul li.xp { color: var(--gold); } /* Label "Expertise:" */
+
+/* Teks footer skills */
+.sk-ft { text-align:center; margin-top:90px; font-family:'gothic',Arial; font-size:1.3rem; color:rgba(255,255,255,0.48); line-height:1.6; }
+
+/* Dev mode — tombol hapus card */
+.card-del { position:absolute; top:12px; right:12px; display:none; width:26px; height:26px; border-radius:50%; background:rgba(255,60,60,0.12); border:1px solid rgba(255,60,60,0.32); color:rgba(255,100,100,0.8); cursor:pointer; align-items:center; justify-content:center; font-size:0.82rem; z-index:5; transition:all 0.22s; }
+.card-del:hover { background: rgba(255,60,60,0.3); }
+body.dev-on .sk-card { position: relative; }
+body.dev-on .card-del { display: flex; }
+
+/* Dev mode — tombol tambah item skill */
+.add-i-btn { display:none; width:100%; margin-top:14px; background:none; border:1px dashed rgba(255,187,0,0.22); color:rgba(255,187,0,0.42); padding:7px; border-radius:6px; cursor:pointer; font-size:0.7rem; letter-spacing:3px; transition:all 0.25s; }
+.add-i-btn:hover { border-color: var(--gold); color: var(--gold); }
+body.dev-on .add-i-btn { display: block; }
+
+/* Dev mode — hapus item individual */
+.del-i { display:none; margin-left:7px; cursor:pointer; color:rgba(255,65,65,0.5); font-size:0.75rem; transition:color 0.2s; }
+.del-i:hover { color: #f55; }
+body.dev-on .del-i { display: inline; }
+body.dev-on .sk-card ul li { display: flex; align-items: center; justify-content: center; }
+
+/* Dev mode — tombol tambah card baru */
+.add-card-btn {
+  width:290px; min-height:200px;
+  border:2px dashed rgba(255,187,0,0.22); border-radius:20px;
+  display:none; flex-direction:column; align-items:center; justify-content:center; gap:12px;
+  cursor:pointer; background:rgba(255,187,0,0.02); transition:all 0.3s;
+}
+.add-card-btn:hover { border-color:rgba(255,187,0,0.6); background:rgba(255,187,0,0.06); }
+.add-card-btn .acp { font-size:2.6rem; color:rgba(255,187,0,0.38); }
+.add-card-btn p { color:rgba(255,255,255,0.3); font-size:0.7rem; letter-spacing:4px; }
+body.dev-on .add-card-btn { display: flex; }
+
+
+/* ================================================================
+   14. CONTACT SECTION
+   ================================================================
+   FIX: Gradient dari transparent ke emas (bukan hitam ke emas)
+   agar light leak video tetap terlihat di bagian atas contact
+   ================================================================ */
+#contact { scroll-margin-top: var(--nav-h); }
+.ct-wrap {
+  min-height: 100vh;
+  padding: 100px 70px 65px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* Gradient: transparan di atas → emas di bawah */
+  background: linear-gradient(
+    to top,
+    var(--gold) 0%,
+    rgba(255, 187, 0, 0.35) 30%,
+    transparent 65%
+  );
+  position: relative;
+  overflow: hidden;
+}
+.ct-quote { max-width:410px; margin-top:200px; }
+.ct-quote h2 { font-size:clamp(1.2rem,2.5vw,2rem); font-weight:lighter; line-height:1.38; }
+.ct-bottom { display:flex; justify-content:flex-end; gap:80px; padding-right:180px; align-items:flex-start; }
+.ct-col h5 { font-family:Arial; font-size:0.78rem; letter-spacing:3px; color:var(--gold); margin-bottom:15px; }
+.ct-col ul { list-style:none; padding:0; }
+.ct-col ul li { margin-bottom:10px; font-size:0.92rem; }
+.ct-col ul li a { color:#fff; text-decoration:none; transition:color 0.3s; }
+.ct-col ul li a:hover { color: rgba(0,0,0,0.6); }
+
+/* Social media list */
+.social-list { display:flex; flex-direction:column; gap:10px; }
+.social-item { display:flex; align-items:center; gap:10px; font-size:0.92rem; }
+.social-ico { width:22px; font-size:0.72rem; color:var(--gold); }
+.social-item a { color:#fff; text-decoration:none; transition:color 0.3s; }
+.social-item a:hover { color:rgba(0,0,0,0.6); }
+.add-social-btn { display:none; background:none; border:1px dashed rgba(255,187,0,0.2); color:rgba(255,187,0,0.4); padding:6px 14px; border-radius:6px; cursor:pointer; font-size:0.65rem; letter-spacing:3px; transition:all 0.25s; margin-top:8px; }
+body.dev-on .add-social-btn { display: block; }
+.del-social { display:none; margin-left:6px; cursor:pointer; color:rgba(255,65,65,0.4); font-size:0.75rem; }
+body.dev-on .del-social { display: inline; }
+
+/* Copyright — TIDAK berubah cursor saat hover (tersembunyi dari user) */
+.copy-txt {
+  text-align:center; font-size:0.85rem; color:#fff; margin-top:60px;
+  cursor: default !important;  /* Kursor tetap panah, tidak berubah pointer */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+
+
+/* ================================================================
+   15. LIGHTBOX — Popup gambar penuh layar
+   ================================================================ */
+#lb {
+  position: fixed;
+  inset: 0;
+  z-index: 8000;
+  background: rgba(0, 0, 0, 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: background 0.42s;
+}
+#lb.on { background: rgba(0, 0, 0, 0.94); pointer-events: all; }
+
+.lb-img {
+  max-width: 88vw;
+  max-height: 83vh;
+  border-radius: 12px;
+  transform: scale(0.72) translateY(25px);
+  opacity: 0;
+  transition: transform 0.52s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.42s;
+  box-shadow: 0 35px 90px rgba(0,0,0,0.95);
+  display: block;
+}
+
+#lb.on .lb-img { transform: scale(1) translateY(0); opacity: 1; }
+
+#lb .lb-x,
+#lb .lb-nav {
+  opacity: 0;
+  pointer-events: none;
+}
+#lb.on .lb-x,
+#lb.on .lb-nav {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.lb-x { position:absolute; top:26px; right:36px; font-size:2rem; color:rgba(255,255,255,0.6); background:none; border:none; cursor:pointer; transition:all 0.32s; line-height:1; }
+.lb-x:hover { color:var(--gold); transform:rotate(90deg); }
+
+.lb-nav { position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.14); color:#fff; font-size:1.5rem; width:50px; height:50px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.3s; }
+.lb-nav:hover { background:rgba(255,187,0,0.22); border-color:var(--gold); }
+#lb-pv { left:26px; }
+#lb-nx { right:26px; }
+
+
+/* ================================================================
+   16. 3D MODEL VIEWER — Modal Three.js
+   ================================================================ */
+#v3d {
+  position: fixed;
+  inset: 0;
+  z-index: 9800;
+  background: #040404;
+  display: none;
+  flex-direction: column;
+}
+#v3d.open { display: flex; }
+
+.v3d-hd { display:flex; align-items:center; justify-content:space-between; padding:14px 30px; border-bottom:1px solid rgba(255,187,0,0.18); background:rgba(0,0,0,0.85); flex-shrink:0; }
+.v3d-title { font-family:'gothic',Arial; font-size:0.8rem; letter-spacing:5px; color:var(--gold); }
+.v3d-hint { font-family:Arial; font-size:0.6rem; letter-spacing:2px; color:rgba(255,255,255,0.28); }
+.v3d-cls { background:none; border:none; color:rgba(255,255,255,0.5); font-size:1.6rem; cursor:pointer; line-height:1; transition:color 0.3s, transform 0.3s; }
+.v3d-cls:hover { color:var(--gold); transform:rotate(90deg); }
+
+#v3d-canvas { flex:1; cursor:grab; display:block; }
+#v3d-canvas:active { cursor: grabbing; }
+
+.v3d-loading { position:absolute; inset:60px 0 0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; background:rgba(4,4,4,0.9); z-index:2; }
+.v3d-loading p { font-family:'gothic',Arial; font-size:0.75rem; letter-spacing:4px; color:rgba(255,187,0,0.7); }
+.v3d-spinner { width:36px; height:36px; border:2px solid rgba(255,187,0,0.2); border-top-color:var(--gold); border-radius:50%; animation:vspin 0.8s linear infinite; }
+@keyframes vspin { to { transform:rotate(360deg); } }
+
+.v3d-ui-btns { position:absolute; bottom:20px; right:20px; display:flex; gap:8px; }
+.v3d-ui-btn { background:rgba(0,0,0,0.7); border:1px solid rgba(255,187,0,0.25); color:rgba(255,187,0,0.7); padding:7px 14px; border-radius:6px; cursor:pointer; font-size:0.65rem; letter-spacing:3px; transition:all 0.22s; }
+.v3d-ui-btn:hover { border-color:var(--gold); color:var(--gold); }
+
+
+/* ================================================================
+   17. DEVELOPER MODE — Login, Toolbar, Editable Styles
+   ================================================================ */
+
+/* Modal login dev */
+#dev-modal { position:fixed; inset:0; z-index:9000; background:rgba(0,0,0,0.88); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); display:none; align-items:center; justify-content:center; }
+#dev-modal.on { display: flex; }
+
+.dev-box { background:#0c0c0c; border:1px solid rgba(255,187,0,0.32); border-radius:18px; padding:52px 58px; width:min(400px,92vw); text-align:center; position:relative; }
+.dev-box h3 { font-family:'gothic',Arial; color:var(--gold); font-size:0.88rem; letter-spacing:8px; margin-bottom:36px; }
+.dev-box input { width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.14); border-radius:8px; padding:14px 18px; color:#fff; font-family:'coolvetica',Arial; letter-spacing:2px; margin-bottom:14px; font-size:0.88rem; outline:none; transition:border-color 0.3s; }
+.dev-box input:focus { border-color: var(--gold); }
+.dev-err { color:#f55; font-size:0.72rem; font-family:Arial; opacity:0; transition:opacity 0.3s; margin:-6px 0 10px; height:16px; }
+.dev-err.on { opacity: 1; }
+.dev-enter { background:var(--gold); color:#000; border:none; padding:14px 50px; border-radius:8px; font-family:'gothic',Arial; letter-spacing:5px; font-size:0.75rem; cursor:pointer; margin-top:8px; transition:all 0.3s; }
+.dev-enter:hover { background:#ffd200; transform:scale(1.03); }
+.dev-box-x { position:absolute; top:14px; right:18px; background:none; border:none; color:rgba(255,255,255,0.32); font-size:1.22rem; cursor:pointer; padding:0; transition:color 0.22s; }
+.dev-box-x:hover { color: #fff; }
+
+/* Toolbar dev di bagian bawah layar */
+#dev-bar { position:fixed; bottom:0; left:0; right:0; z-index:7000; background:linear-gradient(135deg,#0d0d00,#141400); border-top:1px solid rgba(255,187,0,0.55); padding:11px 26px; display:none; align-items:center; gap:11px; flex-wrap:wrap; }
+#dev-bar.on { display: flex; }
+.db-lbl { font-family:'gothic',Arial; font-size:0.62rem; color:var(--gold); letter-spacing:5px; margin-right:5px; }
+.db-btn { background:rgba(255,187,0,0.07); border:1px solid rgba(255,187,0,0.28); color:rgba(255,255,255,0.82); padding:7px 16px; border-radius:7px; cursor:pointer; font-size:0.7rem; letter-spacing:2px; transition:all 0.22s; white-space:nowrap; }
+.db-btn:hover { background:rgba(255,187,0,0.18); border-color:var(--gold); }
+.db-btn.red { border-color:rgba(255,80,80,0.28); color:rgba(255,120,120,0.82); }
+.db-btn.red:hover { background:rgba(255,80,80,0.14); border-color:#f55; }
+#db-exit { margin-left: auto; }
+
+/* Style elemen yang bisa diedit di dev mode */
+body.dev-on [data-ck] { outline:1px dashed rgba(255,187,0,0.4); border-radius:3px; min-width:10px; min-height:1em; }
+body.dev-on [data-ck]:hover { outline:1px solid rgba(255,187,0,0.7); background:rgba(255,187,0,0.04); }
+body.dev-on [data-ck]:focus { outline:2px solid var(--gold); background:rgba(255,187,0,0.07); }
+
+
+/* ================================================================
+   18. TOAST NOTIFIKASI — Muncul setelah save
+   ================================================================ */
+#toast {
+  position: fixed;
+  bottom: 78px;
+  right: 28px;
+  background: rgba(0, 22, 0, 0.94);
+  border: 1px solid #4f6;
+  color: #8f9;
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  z-index: 9500;
+  transform: translateX(140%); /* Tersembunyi di kanan layar */
+  transition: transform 0.48s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+#toast.on { transform: translateX(0); } /* Muncul saat kelas .on ditambahkan */
+
+
+/* ================================================================
+   19. KELAS UTILITAS
+   ================================================================ */
+.gold { color: var(--gold); } /* Teks warna emas */
+
+
+/* ================================================================
+   20. RESPONSIVE — Tablet & Mobile
+   ================================================================ */
+
+/* ── TABLET (max 1000px) ── */
+@media (max-width: 1000px) {
+  .sk-card { width: 265px; }
+  .ct-bottom { padding-right: 60px; gap: 55px; }
+}
+
+/* ── TABLET KECIL (max 800px) ── */
+@media (max-width: 800px) {
+  nav { padding: 0 28px; }
+  nav ul { width: 55%; }
+  .ct-bottom { padding-right: 20px; gap: 40px; }
+  .ct-wrap { padding: 80px 40px 55px; }
+  .a-frame { margin-left: 5%; }
+
+  /* Slider sedikit dikecilkan di tablet */
+  .slider-outer { transform: scale(0.72); height: 250px; }
+}
+
+/* ── MOBILE (max 576px) ── */
+@media (max-width: 576px) {
+  :root { --nav-h: 62px; }
+
+  /* Paksa tidak ada scroll horizontal */
+  html, body { overflow-x: hidden; max-width: 100vw; }
+
+  /* Nav mobile */
+  nav { padding: 0 14px; }
+  #nav-clock { font-size: 0.9rem; letter-spacing: 3px; }
+  .hbg { display: flex; } /* Tampilkan hamburger */
+
+  /* Menu mobile — slide dari kanan */
+  nav ul {
+    position: fixed;
+    top: 0; right: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 44px;
+    width: 72%;
+    height: 100vh;
+    background: rgba(8, 8, 8, 0.97);
+    border-left: 1px solid rgba(255, 187, 0, 0.14);
+    transform: translateX(100%);
+    opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.34, 1, 0.64, 1), opacity 0.4s;
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    padding-top: 0;
+    margin-top: 0;
+    z-index: -1;
+  }
+  nav ul.open { transform: translateX(0); opacity: 1; }
+  nav ul li a { font-size: 1rem; letter-spacing: 5px; }
+
+  
+
+  /* ── HERO MOBILE ──
+     Mengikuti referensi gambar:
+     - Teks langsung di bawah nav, tidak didorong ke bawah
+     - Hero image sebagai overlay transparan di belakang teks */
+  .hero-sec {
+    height: auto;
+    min-height: 100svh; /* svh = small viewport height untuk mobile */
+    display: flex;
+    flex-direction: column;
+  }
+  .hero-text {
+    padding: calc(var(--nav-h) + 18px) 16px 40px;
+    position: absolute;
+    z-index: 2;
+    top: 40%;
+  }
+  .hero-h1 { font-size: clamp(1.7rem, 7.5vw, 2.3rem); letter-spacing: 2px; }
+  .hero-tagline { font-size: 0.72rem; }
+  .hero-subs { flex-direction: column; }
+  .hero-subs h4 { margin-bottom: 4px; font-size: 0.78rem; }
+
+  /* Hero image hanya mengisi separuh atas, sebagai backdrop */
+  .hero-img-wrap {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 80%; /* Tidak penuh, hanya bagian atas */
+    z-index: -1;
+    overflow: hidden;
+  }
+  .hero-img-wrap img {
+    opacity: 0.4; /* Transparan agar teks terbaca */
+    object-position: top center;
+  }
+
+  .hazard { bottom: 0; height: 180px; }
+
+  /* ── ABOUT MOBILE ── */
+  .about-grid {
+    grid-template-areas: "lbl lbl" "txt txt" "line line" "photo vis";
+    padding-top: 40px;
+    width: 92%;
+    margin: 0 auto;
+    grid-template-columns: 1fr 1fr;
+  }
+  .a-txt { width: 97%; margin-left: 0; font-size: 1rem; }
+  .a-frame { margin-left: -15px; transform: scale(0.72); transform-origin: left; }
+  .a-vis { font-size: 0.8rem; margin-right: 0; padding-bottom: 60px; }
+
+  /* ── PROJECT SLIDER MOBILE ──
+     FIX UTAMA: Ganti karousel 3D menjadi satu slide penuh lebar
+     Saat mobile, hanya slide .sa yang terlihat, yang lain disembunyikan.
+     Navigasi via swipe atau dots. */
+  #project { margin-top: 50px; }
+  .proj-cat { padding: 0 12px; margin-top: 50px; }
+  .cat-num { font-size: 1.4rem; }
+  .cat-title { font-size: 0.82rem; letter-spacing: 3px; }
+
+  .slider-outer {
+    transform: none !important; /* Override transform scale dari tablet */
+    height: 220px;
+    overflow: hidden;
+    display: block;
+    position: relative;
+  }
+
+  /* Semua slide: transparan dan tidak bisa diklik */
+  .sld {
+    position: absolute !important;
+    width: calc(100% - 32px) !important;
+    height: 200px !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) scale(1) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.4s ease !important;
+    border-radius: 12px;
+  }
+
+  /* Hanya slide aktif yang terlihat */
+  .sld.sa {
+    opacity: 1 !important;
+    pointer-events: all !important;
+    z-index: 5 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
+    transform: translate(-50%, -50%) scale(1) !important; /* Override box-shadow/scale */
+  }
+
+  /* Hilangkan glow border di slide aktif mobile */
+  .sld.sa::after { display: none; }
+
+  .dots-row { margin-top: 12px; }
+
+  /* ── SKILLS MOBILE ── */
+  .sk-hd h2 { padding-top: 50px; }
+  .sk-card { width: min(280px, 90vw); }
+
+  /* ── CONTACT MOBILE ── */
+  .ct-wrap { padding: 60px 6% 55px; }
+  .ct-quote { margin-top: 40px; width: 100%; }
+  .ct-bottom { flex-direction: column; gap: 28px; align-self: flex-start; padding-right: 0; }
+  .copy-txt { font-size: 0.72rem; }
+
+  /* ── LIGHTBOX MOBILE ── */
+  #lb-pv { left: 8px; }
+  #lb-nx { right: 8px; }
+  .lb-nav { width: 38px; height: 38px; font-size: 1.1rem; }
+  .lb-x { top: 16px; right: 18px; font-size: 1.7rem; }
+
+  /* Dev mode box mobile */
+  .dev-box { padding: 42px 28px; }
+}

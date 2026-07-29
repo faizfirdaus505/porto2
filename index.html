@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <!--
+    ================================================================
+    FAIZ PORTFOLIO — index.html
+    ================================================================
+    Struktur:
+    - HEAD        : meta, Three.js CDN, link CSS
+    - BODY        : semua elemen HTML
+    - AKHIR BODY  : script.js
+
+    Cara ubah konten:
+    1. TEKS       : Cukup ubah langsung di HTML, atau pakai Dev Mode
+    2. GAMBAR     : Ganti src="img/..." dengan path gambar Anda
+    3. WARNA/FONT : Edit di style.css bagian "CSS Variables" (baris ~40)
+    4. KATA HERO  : Edit array CYCLE_WORDS di script.js (baris ~43)
+    5. DEV MODE   : Klik copyright 5x, login faizdev/ForgedByDesign2026
+    ================================================================
+  -->
+
+  <!-- Agar tampilan mobile tidak di-zoom otomatis oleh browser -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Faiz Portofolio</title>
+
+  <!--
+    Three.js — Library untuk menampilkan model 3D (file .stl dari SolidWorks)
+    Butuh koneksi internet. Jika offline, fitur 3D viewer tidak tersedia.
+  -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Stylesheet utama -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- ============================================================
+    LIGHT LEAK — Video overlay cahaya di background
+    File: img/leak2.mp4 — ganti dengan video lain jika mau
+    ============================================================ -->
+  <div class="light-leak">
+    <video autoplay muted loop playsinline>
+      <source src="img/leak2.mp4" type="video/mp4">
+    </video>
+  </div>
+
+
+  <!-- ============================================================
+    LOADING SCREEN
+    Muncul pertama kali, menampilkan progress bar dan animasi logo.
+    Teks "FAIZ / Portofolio" diketik satu per satu, lalu terbang
+    ke posisi nav logo (opacity tetap 100% selama animasi).
+    ============================================================ -->
+  <div id="loader">
+    <!-- Logo teks yang diketik -->
+    <div id="ld-logo">
+      <span id="ld-l1"></span>  <!-- Diisi "FAIZ" oleh JS -->
+      <span id="ld-l2"></span>  <!-- Diisi "Portofolio" oleh JS -->
+    </div>
+    <!-- Progress bar bawah -->
+    <div class="ld-bar-wrap">
+      <div id="ld-pct">0%</div>
+      <div class="ld-track">
+        <div id="ld-fill"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+    3D MODEL VIEWER — Popup fullscreen untuk model .stl
+    Dibuka saat klik slide CAD yang sudah di-set model 3D-nya.
+    ============================================================ -->
+  <div id="v3d">
+    <!-- Header viewer -->
+    <div class="v3d-hd">
+      <span class="v3d-title" id="v3d-title">CAD MODEL</span>
+      <span class="v3d-hint">🖱 DRAG ROTATE &nbsp;·&nbsp; SCROLL ZOOM &nbsp;·&nbsp; PINCH ZOOM</span>
+      <button class="v3d-cls" id="v3d-cls">✕</button>
+    </div>
+    <!-- Canvas Three.js -->
+    <canvas id="v3d-canvas"></canvas>
+    <!-- Indikator loading -->
+    <div class="v3d-loading" id="v3d-loading">
+      <div class="v3d-spinner"></div>
+      <p>LOADING 3D MODEL...</p>
+    </div>
+    <!-- Tombol UI -->
+    <div class="v3d-ui-btns">
+      <button class="v3d-ui-btn" id="v3d-reset">⊙ RESET VIEW</button>
+      <button class="v3d-ui-btn" id="v3d-wire">⬡ WIREFRAME</button>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+    LIGHTBOX — Popup gambar penuh layar
+    Dibuka saat klik slide aktif yang bertipe gambar.
+    ============================================================ -->
+  <div id="lb">
+    <button class="lb-x"  id="lb-x">✕</button>
+    <button class="lb-nav" id="lb-pv">‹</button>  <!-- Prev -->
+    <img    class="lb-img" id="lb-img" src="" alt="Project image">
+    <button class="lb-nav" id="lb-nx">›</button>  <!-- Next -->
+  </div>
+
+
+  <!-- ============================================================
+    DEVELOPER MODE — Modal login (tersembunyi)
+    Cara akses: klik teks copyright di bawah sebanyak 5 kali.
+    Cursor tidak berubah → pengguna biasa tidak tahu ada fitur ini.
+    ============================================================ -->
+  <div id="dev-modal">
+    <div class="dev-box">
+      <button class="dev-box-x" id="dm-x">✕</button>
+      <h3>DEVELOPER ACCESS</h3>
+      <input type="text"     id="dm-u" placeholder="USERNAME" autocomplete="off" spellcheck="false">
+      <input type="password" id="dm-p" placeholder="PASSWORD">
+      <div class="dev-err" id="dm-err">Incorrect credentials</div>
+      <button class="dev-enter" id="dm-enter">ENTER</button>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+    DEVELOPER TOOLBAR — Muncul di bawah layar saat dev mode aktif
+    Fitur: Save, Tambah Gambar, Tambah Skill Card, dll.
+    ============================================================ -->
+  <div id="dev-bar">
+    <span class="db-lbl">⚡ DEV MODE AKTIF</span>
+    <button class="db-btn" id="db-save">💾 SAVE ALL</button>
+    <button class="db-btn" id="db-addcard">＋ SKILL CARD</button>
+    <button class="db-btn" id="db-addsocial">＋ SOCIAL MEDIA</button>
+    <button class="db-btn red" id="db-reset">↺ RESET DEFAULT</button>
+    <button class="db-btn red" id="db-exit">✕ EXIT DEV MODE</button>
+
+    <!-- File input tersembunyi untuk upload gambar proyek -->
+    <input type="file" id="dev-img-file" accept="image/*"  style="display:none">
+    <!-- File input tersembunyi untuk upload model 3D (.stl dari SolidWorks) -->
+    <input type="file" id="dev-3d-file"  accept=".stl,.obj" style="display:none">
+  </div>
+
+
+  <!-- ============================================================
+    TOAST NOTIFIKASI — Muncul di pojok kanan bawah setelah save
+    ============================================================ -->
+  <div id="toast">✓ PERUBAHAN TERSIMPAN</div>
+
+
+  <!-- ============================================================
+    NAVIGATION BAR — Fixed di atas layar
+    ============================================================ -->
+  <nav id="main-nav">
+
+    <!-- Logo — opacity 0 saat loading, muncul setelah animasi logo mendarat -->
+    <div id="nav-logo">
+      <span class="n1">FAIZ</span><br>
+      <span class="n2">Portofolio</span>
+    </div>
+
+    <!-- Jam digital — diupdate setiap detik oleh JS -->
+    <div id="nav-clock">
+      <span id="nc-h">00</span><span id="nc-sep">:</span><span id="nc-m">00</span>
+    </div>
+
+    <!-- Link navigasi — kelas .act ditambahkan JS saat section aktif -->
+    <ul id="nav-ul">
+      <li><a href="#home"    data-s="home">Home</a></li>
+      <li><a href="#about"   data-s="about">About</a></li>
+      <li><a href="#project" data-s="project">Project</a></li>
+      <li><a href="#skills"  data-s="skills">Skills</a></li>
+      <li><a href="#contact" data-s="contact">Contact</a></li>
+    </ul>
+
+    <!-- Hamburger menu (mobile) -->
+    <div class="hbg" id="hbg">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+  </nav>
+
+
+  <!-- ============================================================
+    ANCHOR HOME — Spacer setinggi nav agar scroll ke #home benar
+    ============================================================ -->
+  <div id="home"></div>
+
+
+  <!-- ============================================================
+    HERO SECTION — Section pertama, setinggi 100vh
+    ============================================================ -->
+  <section class="hero-sec">
+
+    <!-- Sinar scan bergerak (dekorasi industrial) -->
+    <div class="scan-beam"></div>
+
+    <!-- Teks hero — muncul dengan animasi setelah loading selesai -->
+    <div class="hero-text rev" id="hero-blk">
+
+      <!-- Label teknis kecil -->
+      <div class="tech-label" style="margin-bottom:10px;">PORTFOLIO v2.0</div>
+
+      <!-- Tagline — teks dalam span bisa diedit di dev mode -->
+      <p class="hero-tagline">
+        Iron <span class="gold" data-ck="ht1">Within</span>,
+        Iron <span class="gold" data-ck="ht2">Without</span>
+      </p>
+
+      <!-- Judul utama — "cycle-w" adalah kata yang berganti otomatis -->
+      <h1 class="hero-h1">
+        Forged by <span style="font-family:'century',Arial" data-ck="hw1">Design</span><br>
+        Driven by <span id="cycle-w" class="cycle-word" style="font-family:'gothic',Arial">Inovation</span>
+      </h1>
+      <!--
+        Kata "Inovation" berganti setiap 4 detik dengan animasi blur.
+        Urutan kata diatur di CYCLE_WORDS di script.js (baris ~43).
+        Tambah/ganti kata sesuai selera.
+      -->
+
+      <!-- Sub-judul keahlian -->
+      <div class="hero-subs">
+        <h4 data-ck="hs1">• Mechanical Design • Digital Artist</h4>
+        <h4 data-ck="hs2">&nbsp;• Graphic Design • Front-End Learner</h4>
+      </div>
+
+    </div>
+
+    <!-- Background image hero — terisi penuh section -->
+    <div class="hero-img-wrap">
+      <img src="img/hero.png" alt="Hero background">
+      <!--
+        Ganti hero.png dengan foto atau gambar latar yang Anda inginkan.
+        Disarankan dimensi lebar, portrait untuk tampil baik di mobile.
+      -->
+    </div>
+      <!-- ============================================================
+    MARQUEE — Teks berjalan kiri-kanan tanpa henti
+    ============================================================ -->
+    <div class="mq-wrap">
+      <div class="mq-inner">
+      <!--
+        Teks digandakan (2 span) agar loop terasa mulus tanpa jeda.
+        Ubah teks sesuai keahlian Anda.
+      -->
+      <span>MECHANICAL DESIGN <em>✦</em> DIGITAL ART <em>✦</em> GRAPHIC DESIGN <em>✦</em> FRONT-END DEV <em>✦</em> SOLIDWORKS <em>✦</em> AUTOCAD <em>✦</em> PHOTOSHOP <em>✦</em> ENGINEERING <em>✦</em> CREATIVITY <em>✦</em> INNOVATION <em>✦</em>&nbsp;&nbsp;</span>
+      <span>MECHANICAL DESIGN <em>✦</em> DIGITAL ART <em>✦</em> GRAPHIC DESIGN <em>✦</em> FRONT-END DEV <em>✦</em> SOLIDWORKS <em>✦</em> AUTOCAD <em>✦</em> PHOTOSHOP <em>✦</em> ENGINEERING <em>✦</em> CREATIVITY <em>✦</em> INNOVATION <em>✦</em>&nbsp;&nbsp;</span>
+
+      </div>
+    </div>
+
+    
+
+  </section>
+
+
+  
+
+  <!-- Hazard stripe — di bagian bawah hero -->
+    <div class="hazard"></div>
+
+  <!-- ============================================================
+    ABOUT SECTION
+    ============================================================ -->
+  <div id="about">
+    <div class="about-grid">
+
+      <!-- Label "ABOUT" -->
+      <p class="a-lbl rev" data-ck="al">ABOUT</p>
+
+      <!-- Paragraf utama -->
+      <h3 class="a-txt rev d1" data-ck="at">
+        I am a Mechanical Design Engineering student driven by curiosity and creativity.
+        My passion lies in combining CAD design, digital art, and front-end development
+        to create innovative solutions that balance functionality with visual impact.
+      </h3>
+
+      <!-- Foto profil dengan border berputar -->
+      <div class="a-photo-col rev sc d2">
+        <div class="a-frame">
+          <img src="img/muka2.png" alt="Faiz Firdaus">
+          <!--
+            Ganti muka2.png dengan foto Anda.
+            Ukuran ideal: 220x320px atau rasio 2:3.
+          -->
+          <!-- Overlay crosshair teknis -->
+          <div class="ch-wrap">
+            <div class="ch-h"></div>
+            <div class="ch-v"></div>
+            <div class="ch-ring"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Garis pemisah -->
+      <div class="a-line rev d1"></div>
+
+      <!-- Teks visi di sisi kanan -->
+      <h4 class="a-vis rev fr d2" data-ck="av">
+        My vision is to continuously expand my expertise across multiple disciplines,
+        striving to become a true Jack of All Trades who can adapt, innovate,
+        and create meaningful solutions.
+      </h4>
+
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+    PROJECTS SECTION — Multi-Category Slider
+    Kategori dibangun secara dinamis oleh JS dari array DEFAULT_DATA.categories
+    di script.js. Untuk mengubah default, edit array tersebut.
+    ============================================================ -->
+  <div id="project">
+
+    <!-- Header intro -->
+    <div class="proj-intro rev">
+      <h2 data-ck="pjh">Selected<br>Project</h2>
+      <p data-ck="pjs">
+        A selection of projects showcasing expertise in engineering,<br>
+        creativity, and digital craftsmanship.
+      </p>
+    </div>
+
+    <!-- Kontainer kategori — diisi oleh JS (buildAllCategories) -->
+    <div id="proj-cats"></div>
+
+    <!-- Tombol tambah kategori (hanya muncul di dev mode) -->
+    <div class="add-cat-wrap">
+      <button class="add-cat-btn" id="add-cat-btn">＋ ADD PROJECT CATEGORY</button>
+    </div>
+
+  </div>
+
+
+  <!-- ============================================================
+    SKILLS SECTION
+    Card skill dibangun dinamis oleh JS (buildSkills).
+    Untuk mengubah default, edit DEFAULT_DATA.skills di script.js.
+    ============================================================ -->
+  <div id="skills">
+
+    <!-- Header dengan efek blueprint grid di background -->
+    <div class="sk-hd bp-grid" style="padding-bottom:20px;">
+      <h2 class="rev" data-ck="skh">Core Competence<br>Skills</h2>
+      <p class="rev d1" data-ck="skp">
+        A diverse set of technical and creative skills continuously developed<br>
+        to transform ideas into practical, functional, and visually engaging solutions.
+      </p>
+    </div>
+
+    <!-- Grid card skill — diisi oleh JS -->
+    <div class="sk-grid" id="sk-grid"></div>
+
+    <!-- Teks footer -->
+    <div class="sk-ft rev" data-ck="skf">More Skills<br>Are Being Forged.</div>
+
+  </div>
+
+
+  <!-- ============================================================
+    CONTACT SECTION
+    Gradient: transparan di atas → emas di bawah
+    sehingga light leak video tetap terlihat.
+    ============================================================ -->
+  <div id="contact">
+    <div class="ct-wrap">
+
+      <!-- Gear dekorasi berputar di pojok -->
+      <svg class="ct-gear" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <path d="M85 5L85 0L115 0L115 5Q130 8 142 18L147 13L165 31L160 36Q170 48 173 63L178 63L178 87L173 87Q170 102 160 114L165 119L147 137L142 132Q130 142 115 145L115 150L85 150L85 145Q70 142 58 132L53 137L35 119L40 114Q30 102 27 87L22 87L22 63L27 63Q30 48 40 36L35 31L53 13L58 18Q70 8 85 5ZM100 55A45 45 0 1 0 100 145A45 45 0 1 0 100 55ZM100 70A30 30 0 1 1 100 130A30 30 0 1 1 100 70Z"
+              fill="rgba(255,187,0,1)"/>
+      </svg>
+
+      <!-- Quote / kalimat inspiratif -->
+      <div class="ct-quote rev">
+        <h2 data-ck="cq">
+          Every project you have seen here represents a step
+          in my journey of continuous learning and growth.
+        </h2>
+      </div>
+
+      <!-- Kolom kontak dan social media -->
+      <div class="ct-bottom rev d1">
+
+        <!-- Kontak langsung -->
+        <div class="ct-col">
+          <h5>CONTACT</h5>
+          <ul>
+            <!--
+              Ganti email dan nomor telepon di sini.
+              Atribut data-ck memungkinkan edit via dev mode.
+            -->
+            <li><a href="mailto:faizfirdaus505@gmail.com" data-ck="ce">E. faizfirdaus505@gmail.com</a></li>
+            <!-- <li><a href="tel:+6289656713072"              data-ck="cp">P. +62 896-5671-3072</a></li> -->
+          </ul>
+        </div>
+
+        <!-- Social media — diisi dinamis oleh JS (buildSocials) -->
+        <div class="ct-col">
+          <h5>SOCIAL MEDIA</h5>
+          <div class="social-list" id="social-list">
+            <!-- Diisi oleh buildSocials() di script.js -->
+          </div>
+          <!--
+            Tombol tambah social hanya muncul di dev mode.
+            Atau klik "＋ SOCIAL MEDIA" di toolbar dev mode.
+          -->
+          <button class="add-social-btn" id="add-social-btn">＋ ADD SOCIAL</button>
+        </div>
+
+      </div>
+
+      <!--
+        COPYRIGHT — JANGAN HAPUS atribut id="copy-trg"!
+        Ini adalah trigger tersembunyi untuk dev mode.
+        Klik 5 kali untuk membuka login dev mode.
+        cursor:default di CSS agar pointer tidak berubah → pengguna tidak curiga.
+      -->
+      <p class="copy-txt" id="copy-trg">© 2026 Muhammad Faiz Firdaus</p>
+
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+    JAVASCRIPT UTAMA — Diletakkan di akhir body agar DOM sudah siap
+    ============================================================ -->
+  <script src="coba.js"></script>
+
+</body>
+</html>
