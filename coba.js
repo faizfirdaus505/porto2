@@ -1,4 +1,3 @@
-
 /* ================================================================
    FAIZ PORTFOLIO — script.js  (versi final)
    ================================================================
@@ -109,10 +108,28 @@ let cursors = [];
 /* ================================================================
    02. GITHUB API
    ================================================================ */
-let GH = {};
-try { GH = JSON.parse(localStorage.getItem('gh_settings') || '{}'); } catch(e) {}
+/* Konfigurasi repo GitHub — owner/repo/branch/pagesUrl BUKAN rahasia,
+   jadi aman ditulis langsung di source. Ganti sesuai repo kamu.
+   Dengan ini SEMUA perangkat (termasuk pengunjung biasa) otomatis tahu
+   harus baca data.json dari mana — tidak perlu isi GitHub Settings
+   satu-satu di tiap perangkat hanya untuk MELIHAT update. */
+const GH_REPO_CONFIG = {
+  owner:    'faizfirdaus',                 // ganti dengan username GitHub kamu
+  repo:     'faiz-portfolio',              // ganti dengan nama repo kamu
+  branch:   'main',
+  pagesUrl: 'https://faizfirdaus.github.io/faiz-portfolio'
+};
 
-const ghReady = () => !!(GH.token && GH.owner && GH.repo && GH.branch);
+let GH = { ...GH_REPO_CONFIG };
+try {
+  const saved = JSON.parse(localStorage.getItem('gh_settings') || '{}');
+  GH = { ...GH_REPO_CONFIG, ...saved };  // token (rahasia) tetap dari localStorage per-perangkat
+} catch(e) {}
+
+/* Baca data.json: repo publik, TIDAK butuh token → otomatis siap di semua perangkat */
+const ghCanRead  = () => !!(GH.owner && GH.repo && GH.branch);
+/* Simpan/upload ke repo: butuh token pribadi → tetap harus diisi manual per-perangkat demi keamanan */
+const ghCanWrite = () => !!(GH.token && GH.owner && GH.repo && GH.branch);
 
 function toB64(str) {
   const b = new TextEncoder().encode(str);
@@ -159,7 +176,7 @@ async function ghSaveData() {
 }
 
 async function ghLoadData() {
-  if (!ghReady()) return null;
+  if (!ghCanRead()) return null;
   try {
     const res = await fetch(`https://raw.githubusercontent.com/${GH.owner}/${GH.repo}/${GH.branch}/data.json?t=${Date.now()}`);
     return res.ok ? res.json() : null;
@@ -260,7 +277,7 @@ function hideLoading()    { const e=document.getElementById('up-ov'); if(e)e.sty
    03. MANAJEMEN DATA
    ================================================================ */
 async function loadData() {
-  if (ghReady()) {
+  if (ghCanRead()) {
     const d = await ghLoadData();
     if (d) { console.log('✓ Data dari GitHub'); return d; }
   }
@@ -271,7 +288,7 @@ async function loadData() {
 async function saveData() {
   const payload = {categories:ST.categories,skills:ST.skills,socials:ST.socials,texts:ST.texts};
   localStorage.setItem('fp_v5', JSON.stringify(payload));
-  if (ghReady()) {
+  if (ghCanWrite()) {
     setLoadingMsg('Menyimpan ke GitHub...');
     try { await ghSaveData(); } catch(e) { hideLoading(); showToast('⚠ Gagal simpan GitHub — tersimpan lokal', true); return; }
     hideLoading();
@@ -591,7 +608,7 @@ document.getElementById('dev-img-file')?.addEventListener('change', async functi
   const r=new FileReader();
   r.onload=async ev=>{
     let src=ev.target.result;
-    if(ghReady()){try{src=await ghUploadImage(f,ev.target.result);}catch(err){hideLoading();await customConfirm(`Upload GitHub gagal:\n${err.message}\n\nGambar disimpan lokal sementara.`);}}
+    if(ghCanWrite()){try{src=await ghUploadImage(f,ev.target.result);}catch(err){hideLoading();await customConfirm(`Upload GitHub gagal:\n${err.message}\n\nGambar disimpan lokal sementara.`);}}
     if(si>=0){ST.categories[ci].projects[si].src=src;ST.categories[ci].projects[si].type='image';}
     else ST.categories[ci].projects.push({src,lbl:f.name.replace(/\.[^.]+$/,''),type:'image',modelId:null});
     cursors[ci]=ST.categories[ci].projects.length-1; buildSlider(ci); saveData();
@@ -912,7 +929,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   buildSkills();
   buildSocials();
 
-  console.log(ghReady()
-    ? `✓ GitHub: ${GH.owner}/${GH.repo} (${GH.branch})`
-    : 'ℹ GitHub belum setup — masuk dev mode untuk konfigurasi.');
+  console.log(ghCanWrite()
+    ? `✓ GitHub: ${GH.owner}/${GH.repo} (${GH.branch}) — baca & tulis aktif`
+    : ghCanRead()
+      ? `✓ GitHub: ${GH.owner}/${GH.repo} (${GH.branch}) — baca aktif, isi token di dev mode untuk bisa menyimpan`
+      : 'ℹ GitHub belum dikonfigurasi.');
 });
