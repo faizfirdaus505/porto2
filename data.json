@@ -80,6 +80,12 @@
           "lbl": "10",
           "type": "image",
           "modelId": null
+        },
+        {
+          "src": "https://faizfirdaus505.github.io/porto2/img/uploads/1790381756607_Screenshot_2026-09-26_070839.png",
+          "lbl": "Screenshot 2026-09-26 070839",
+          "type": "image",
+          "modelId": null
         }
       ]
     }
