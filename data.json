@@ -67,6 +67,12 @@
           "src": "img/3.png",
           "lbl": "Graphic Design 03",
           "type": "image"
+        },
+        {
+          "src": "https://faizfirdaus505.github.io/porto2/img/uploads/1790382228684_9__1_.png",
+          "lbl": "9 (1)",
+          "type": "image",
+          "modelId": null
         }
       ]
     },
