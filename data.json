@@ -73,6 +73,12 @@
           "lbl": "9 (1)",
           "type": "image",
           "modelId": null
+        },
+        {
+          "src": "https://faizfirdaus505.github.io/porto2/img/uploads/1790383303020_feed_MPKMP.jpeg",
+          "lbl": "feed MPKMP",
+          "type": "image",
+          "modelId": null
         }
       ]
     },
