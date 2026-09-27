@@ -22,9 +22,9 @@ var DEV_PASSWORD = 'hmtp2025';    // ← GANTI PASSWORD DI SINI
 ================================================================ */
 var GH_REPO_CONFIG = {
   owner:    'faizfirdaus505',
-  repo:     'porto2',
+  repo:     'hmtptest2',
   branch:   'main',
-  pagesUrl: 'https://faizfirdaus505.github.io/porto2/'
+  pagesUrl: 'https://faizfirdaus505.github.io/hmtptest2/'
 };
 
 /* ================================================================ */
